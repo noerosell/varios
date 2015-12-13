@@ -35,12 +35,21 @@ public class AuthenticatorTest {
 
     @Test
     public void testIsAuthenticated() throws Exception {
-        when(mockedUser.getSessionId()).thenReturn(1);
-        assertTrue(authenticator.isAuthenticated(mockedUser));
-        when(mockedUser.getSessionId()).thenReturn(-1);
-        assertFalse(authenticator.isAuthenticated(mockedUser));
 
+        when(mockedUser.getPassword()).thenReturn("password1");
+        authenticator.authenticate(mockedUser,"password1");
+        assertTrue(authenticator.isAuthenticated(mockedUser));
     }
+
+    @Test
+    public void testIsNotAuthenticated() throws Exception {
+
+        when(mockedUser.getPassword()).thenReturn("password1");
+        authenticator.authenticate(mockedUser,"andyqueteden");
+        assertFalse(authenticator.isAuthenticated(mockedUser));
+    }
+
+
 
     @Test
     public void testHasPrivilegesFor() throws Exception {
