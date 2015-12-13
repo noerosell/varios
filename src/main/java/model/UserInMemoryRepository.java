@@ -1,5 +1,6 @@
 package model;
 
+import bussinessLogic.Role;
 import bussinessLogic.User;
 
 import java.util.ArrayList;
@@ -59,10 +60,10 @@ public class UserInMemoryRepository implements UserRepository {
     {
 
 
-        int[] rolesArray1={1};
-        int[] rolesArray2={2};
-        int[] rolesArray3={3};
-        int[] rolesArrayAdmin={999};
+        Role[] rolesArray1={Role.ROLE_1};
+        Role[] rolesArray2={Role.ROLE_2};
+        Role[] rolesArray3={Role.ROLE_3};
+        Role[] rolesArrayAdmin={Role.ROLE_ADMIN};
         User user=new User("user1","password1",rolesArray1);
         rows.add(user);
         user=new User("user2","password2",rolesArray2);

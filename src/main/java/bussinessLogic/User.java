@@ -13,7 +13,7 @@ public class User {
     private int sessionId;
 
 
-    public User(String startlogin, String startPassword, int[] startRoles)
+    public User(String startlogin, String startPassword, Role[] startRoles)
     {
         login=startlogin;
         password=startPassword;
@@ -25,17 +25,17 @@ public class User {
         password=newPassword;
     }
 
-    public void addRole(int role)
+    public void addRole(Role role)
     {
         roles.addRole(role);
     }
 
-    public void removeRole(int role)
+    public void removeRole(Role role)
     {
         roles.deleteRole(role);
     }
 
-    public boolean hasRole(int role)
+    public boolean hasRole(Role role)
     {
         return roles.roleExists(role);
     }

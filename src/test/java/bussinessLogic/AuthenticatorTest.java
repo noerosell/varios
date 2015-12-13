@@ -44,9 +44,9 @@ public class AuthenticatorTest {
 
     @Test
     public void testHasPrivilegesFor() throws Exception {
-        when(mockedUser.hasRole(Roles.ROLE_1)).thenReturn(true);
+        when(mockedUser.hasRole(Role.ROLE_1)).thenReturn(true);
         assertTrue(authenticator.hasPrivilegesFor(mockedUser,WebPage.PAGE_1));
-        when(mockedUser.hasRole(Roles.ROLE_1)).thenReturn(false);
+        when(mockedUser.hasRole(Role.ROLE_1)).thenReturn(false);
         assertFalse(authenticator.hasPrivilegesFor(mockedUser,WebPage.PAGE_1));
 
     }

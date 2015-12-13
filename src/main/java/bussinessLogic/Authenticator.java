@@ -9,7 +9,7 @@ public class Authenticator {
 
     private int nextSessionId;
 
-    private ArrayList<Integer> permisions=new ArrayList<Integer>();
+    private ArrayList<Role> permisions=new ArrayList<Role>();
 
     private static Authenticator instance;
 
@@ -48,14 +48,14 @@ public class Authenticator {
     }
 
     public boolean hasPrivilegesFor(User user,WebPage webPage) {
-        int neededRole = permisions.get(new Integer(webPage.getValue()));
+        Role neededRole = permisions.get(new Integer(webPage.getValue()));
         return user.hasRole(neededRole);
     }
 
     private void setUpPermissions() {
-        permisions.add(WebPage.PAGE_1.getValue(), Roles.ROLE_1);
-        permisions.add(WebPage.PAGE_2.getValue(), Roles.ROLE_2);
-        permisions.add(WebPage.PAGE_3.getValue(), Roles.ROLE_3);
+        permisions.add(WebPage.PAGE_1.getValue(), Role.ROLE_1);
+        permisions.add(WebPage.PAGE_2.getValue(), Role.ROLE_2);
+        permisions.add(WebPage.PAGE_3.getValue(), Role.ROLE_3);
     }
 
 }

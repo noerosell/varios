@@ -1,5 +1,6 @@
 package bussinessLogic.useCases;
 
+import bussinessLogic.Role;
 import bussinessLogic.Roles;
 import bussinessLogic.User;
 import model.UserRepository;
@@ -17,7 +18,7 @@ public class UserWantsCreateANewUser {
      */
     public void execute(User user,UserRepository repository, User newUser)
     {
-        if (user.hasRole(Roles.ADMIN)) {
+        if (user.hasRole(Role.ROLE_ADMIN)) {
             /*we don't know if future implementations of UserRepository will throw exceptions, trues,falses
             or some else, when inserting a row which yet exists. we defense of this in this point.
              */
