@@ -1,6 +1,8 @@
 import Infrastructure.UserInMemoryRepository;
 import bussinessLogic.User;
 import bussinessLogic.useCases.UserWantsAuthenticate;
+import bussinessLogic.useCases.UserWantsAuthenticateRequest;
+import bussinessLogic.useCases.UserWantsAuthenticateResponse;
 import org.eclipse.jetty.http.HttpStatus;
 
 import java.util.Base64;
@@ -15,8 +17,11 @@ public class Main {
     public static void main(String[] args) {
             get("/api/user", (request, response) -> {
                 response.status(HttpStatus.OK_200);
-                return "hello";
+                return "This is the Users Api, you can create: /api/user/create" +
+                        "modify: /api/user/modify/{username}" +
+                        "or delete: /api/user/delete/{username}";
             });
+
 
         before(((request, response) -> {
 
@@ -26,9 +31,12 @@ public class Main {
             String[] dataAuth=new String(authHeader).split(":");
             UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
             UserWantsAuthenticate useCase=new UserWantsAuthenticate(repository);
+            UserWantsAuthenticateRequest requestUC=new UserWantsAuthenticateRequest(dataAuth[0],dataAuth[1]);
 
-            useCase.execute(dataAuth[0],dataAuth[1]);
-            halt(401,"unauthorized");
+            UserWantsAuthenticateResponse responseUC=useCase.execute(requestUC);
+            if (!responseUC.isAnAuthUser) {
+                halt(401, "unauthorized");
+            }
         }));
         }
 

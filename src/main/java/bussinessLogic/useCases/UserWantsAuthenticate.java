@@ -16,11 +16,15 @@ public class UserWantsAuthenticate {
         repository=receivedRepository;
     }
 
-    public boolean execute(String username, String password)
+    public UserWantsAuthenticateResponse execute(UserWantsAuthenticateRequest request)
     {
-        User user=repository.getByLogin(username);
+        UserWantsAuthenticateResponse response=new UserWantsAuthenticateResponse();
+        response.isAnAuthUser=false;
+        User user=repository.getByLogin(request.username);
         Authenticator authenticator=Authenticator.getInstance();
-        return authenticator.authenticate(user,password);
-
+        if (!authenticator.isAuthenticated(user)) {
+            response.isAnAuthUser= authenticator.authenticate(user, request.password);
+        }
+        return response;
     }
 }
