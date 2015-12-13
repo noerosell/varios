@@ -42,7 +42,7 @@ public class Authenticator {
     }
 
     public boolean isAuthenticated(User user) {
-        if (usersAuthenticated.indexOf(user)>-1) {
+        if (usersAuthenticated.contains(user)) {
             return true;
         }
         return false;

@@ -1,4 +1,4 @@
-package bussinessLogic.useCases;
+package bussinessLogic.useCases.UserWantsAuthenticate;
 
 import bussinessLogic.User;
 import bussinessLogic.Authenticator;
@@ -19,7 +19,7 @@ public class UserWantsAuthenticate {
     public UserWantsAuthenticateResponse execute(UserWantsAuthenticateRequest request)
     {
         UserWantsAuthenticateResponse response=new UserWantsAuthenticateResponse();
-        response.isAnAuthUser=false;
+        response.isAnAuthUser=true;
         User user=repository.getByLogin(request.username);
         Authenticator authenticator=Authenticator.getInstance();
         if (!authenticator.isAuthenticated(user)) {

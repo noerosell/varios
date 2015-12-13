@@ -12,6 +12,7 @@ public interface UserRepository {
 
     User getByLogin(String id);
     boolean exists(User user);
+    boolean exists(String username);
     void save(User user);
     void delete(User user);
 }

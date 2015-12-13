@@ -45,7 +45,7 @@ public class UserTest {
     }
     @Test
     public void testLogin() throws Exception {
-        assertEquals(user.getLogin(),"user1");
+        assertEquals(user.getUsername(),"user1");
     }
 
 }

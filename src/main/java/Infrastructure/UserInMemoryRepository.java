@@ -36,7 +36,7 @@ public class UserInMemoryRepository implements UserRepository {
 
         for (User row:rows
              ) {
-            if (row.getLogin().equals(new String(login)))
+            if (row.getUsername().equals(new String(login)))
             {
                 return row;
             }
@@ -54,8 +54,10 @@ public class UserInMemoryRepository implements UserRepository {
     }
 
     public boolean exists(User user) {
-        return (rows.indexOf(user)>-1);
+        return (rows.contains(user));
     }
+
+    public boolean exists(String username) { return this.getByLogin(username)!=null;}
 
     private void initialFillUp()
     {

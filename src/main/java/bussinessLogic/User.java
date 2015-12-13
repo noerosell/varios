@@ -1,13 +1,11 @@
 package bussinessLogic;
 
-import bussinessLogic.Roles;
-
 /**
  * Created by noe.rosell on 11/12/15.
  */
 public class User {
 
-    private String login;
+    private String username;
     private String password;
     private Roles roles;
     private int sessionId;
@@ -15,7 +13,7 @@ public class User {
 
     public User(String startlogin, String startPassword, Role[] startRoles)
     {
-        login=startlogin;
+        username =startlogin;
         password=startPassword;
         roles=new Roles(startRoles);
     }
@@ -45,9 +43,9 @@ public class User {
         return password;
     }
 
-    public String getLogin()
+    public String getUsername()
     {
-        return login;
+        return username;
     }
 
     public void setSessionId(int newSessionId)
@@ -60,4 +58,7 @@ public class User {
         return sessionId;
     }
 
+    public boolean equals(Object obj) {
+        return this.username.equals(((User)obj).username);
+    }
 }
