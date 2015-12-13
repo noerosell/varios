@@ -32,7 +32,6 @@ public class Roles {
         int[] formatedArray = new int[roles.size()];
         for (int i=0; i < formatedArray.length; i++)
         {
-            System.out.println(roles.get(i).getValue());
             formatedArray[i] = roles.get(i).getValue();
         }
         return formatedArray;

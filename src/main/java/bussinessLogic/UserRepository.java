@@ -1,8 +1,6 @@
-package model;
+package bussinessLogic;
 
 import bussinessLogic.User;
-
-import java.util.ArrayList;
 
 /**
  * Created by noe.rosell on 11/12/15.

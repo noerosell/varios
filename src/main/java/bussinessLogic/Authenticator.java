@@ -10,6 +10,7 @@ public class Authenticator {
     private int nextSessionId;
 
     private ArrayList<Role> permisions=new ArrayList<Role>();
+    private ArrayList<User> usersAuthenticated=new ArrayList<User>();
 
     private static Authenticator instance;
 
@@ -29,8 +30,8 @@ public class Authenticator {
     }
 
     public boolean authenticate(User user,String password) {
-        if (user.getPassword() == password) {
-            user.setSessionId(this.generateNewSessionid());
+        if (user.getPassword().equals(new String(password))) {
+            usersAuthenticated.add(user);
             return true;
         }
         return false;
@@ -41,7 +42,7 @@ public class Authenticator {
     }
 
     public boolean isAuthenticated(User user) {
-        if (user.getSessionId() > 0) {
+        if (usersAuthenticated.indexOf(user)>-1) {
             return true;
         }
         return false;

@@ -1,9 +1,8 @@
 package bussinessLogic.useCases;
 
 import bussinessLogic.Role;
-import bussinessLogic.Roles;
 import bussinessLogic.User;
-import model.UserRepository;
+import bussinessLogic.UserRepository;
 
 /**
  * Created by noe.rosell on 11/12/15.

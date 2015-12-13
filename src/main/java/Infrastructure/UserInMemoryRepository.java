@@ -1,7 +1,8 @@
-package model;
+package Infrastructure;
 
 import bussinessLogic.Role;
 import bussinessLogic.User;
+import bussinessLogic.UserRepository;
 
 import java.util.ArrayList;
 
@@ -13,9 +14,9 @@ import java.util.ArrayList;
 public class UserInMemoryRepository implements UserRepository {
 
 
-    private ArrayList<User> rows;
+    private ArrayList<User> rows=new ArrayList<User>();
 
-    private static UserInMemoryRepository instance;
+    private static UserInMemoryRepository instance=null;
 
     private UserInMemoryRepository() {
       //This is a singleton
@@ -35,7 +36,7 @@ public class UserInMemoryRepository implements UserRepository {
 
         for (User row:rows
              ) {
-            if (row.getLogin()==login)
+            if (row.getLogin().equals(new String(login)))
             {
                 return row;
             }
