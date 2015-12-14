@@ -63,6 +63,18 @@ public class Main {
                 return true;
             });
 
+
+            put("/api/user/modify/",(request,response) -> {
+                User inputUser;
+                try {
+                    inputUser = GSON.fromJson(request.body(), User.class);
+                }catch (JsonSyntaxException e) {
+                    response.status(HttpStatus.BAD_REQUEST_400);
+                    return "INVALID JSON";
+                }
+                return true;
+            });
+
         before(((request, response) -> {
 
             String preAuth=request.headers("Authorization");
