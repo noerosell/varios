@@ -1,5 +1,8 @@
 package bussinessLogic;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by noe.rosell on 11/12/15.
  */
@@ -10,9 +13,15 @@ public class User {
     private Roles roles;
     private int sessionId;
 
+    protected String USERNAME_PATTERN = "^[a-z0-9_-]{4,16}$";
+    protected String PASSWORD_PATTERN = "((?=.*\\\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,16})";
 
-    public User(String startlogin, String startPassword, Role[] startRoles)
+
+    public User(String startlogin, String startPassword, Role[] startRoles) throws Exception
     {
+        if (!this.validate(startlogin,startPassword,startRoles)) {
+            throw new Exception("Data not valid");
+        }
         username =startlogin;
         password=startPassword;
         roles=new Roles(startRoles);
@@ -60,5 +69,20 @@ public class User {
 
     public boolean equals(Object obj) {
         return this.username.equals(((User)obj).username);
+    }
+
+    private boolean validate(String startlogin, String startpasswd, Role[] startRoles)
+    {
+        Pattern pattern;
+        Matcher matcher;
+        boolean result;
+        pattern = Pattern.compile(USERNAME_PATTERN);
+        matcher = pattern.matcher(startlogin);
+        result= matcher.matches();
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(startlogin);
+        result=result&&matcher.matches();
+        result=result&&(startRoles.length>0);
+        return result;
     }
 }
