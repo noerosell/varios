@@ -11,52 +11,47 @@ import static org.junit.Assert.*;
 public class AuthenticatorTest {
 
     private Authenticator authenticator;
-    private User mockedUser;
+    private User userWantsAuth;
+    private User userAuthed;
 
     @Before
     public void setUp() throws Exception {
-        mockedUser=mock(User.class);
-        authenticator=Authenticator.getInstance();
-    }
-
-    @Test
-    public void testGetInstance() throws Exception {
-        Authenticator otherInstance=Authenticator.getInstance();
-        assertEquals(otherInstance,authenticator);
-
+        userAuthed=mock(User.class);
+        userWantsAuth=mock(User.class);
+        authenticator=new Authenticator();
     }
 
     @Test
     public void testAuthenticate() throws Exception {
-        when(mockedUser.getPassword()).thenReturn("password1");
-        assertTrue(authenticator.authenticate(mockedUser,"password1"));
+        when(userWantsAuth.getPassword()).thenReturn("Password1");
+        assertTrue(authenticator.authenticate(userWantsAuth,"Password1"));
 
     }
 
     @Test
     public void testIsAuthenticated() throws Exception {
-
-        when(mockedUser.getPassword()).thenReturn("password1");
-        authenticator.authenticate(mockedUser,"password1");
-        assertTrue(authenticator.isAuthenticated(mockedUser));
+        when(userWantsAuth.getUsername()).thenReturn("user1");
+        when(userAuthed.getUsername()).thenReturn("user1");
+        assertTrue(authenticator.isAuthenticated(userWantsAuth,userAuthed));
     }
 
     @Test
     public void testIsNotAuthenticated() throws Exception {
 
-        when(mockedUser.getPassword()).thenReturn("password1");
-        authenticator.authenticate(mockedUser,"andyqueteden");
-        assertFalse(authenticator.isAuthenticated(mockedUser));
+        when(userWantsAuth.getPassword()).thenReturn("Password1");
+        when(userAuthed.getPassword()).thenReturn("Password2");
+        authenticator.authenticate(userWantsAuth,"Password1");
+        assertTrue(authenticator.isAuthenticated(userWantsAuth,userAuthed));
     }
 
 
 
     @Test
     public void testHasPrivilegesFor() throws Exception {
-        when(mockedUser.hasRole(Role.ROLE_1)).thenReturn(true);
-        assertTrue(authenticator.hasPrivilegesFor(mockedUser,WebPage.PAGE_1));
-        when(mockedUser.hasRole(Role.ROLE_1)).thenReturn(false);
-        assertFalse(authenticator.hasPrivilegesFor(mockedUser,WebPage.PAGE_1));
+        when(userAuthed.hasRole(Role.ROLE_1)).thenReturn(true);
+        assertTrue(authenticator.hasPrivilegesFor(userAuthed,Role.ROLE_1));
+        when(userAuthed.hasRole(Role.ROLE_1)).thenReturn(false);
+        assertFalse(authenticator.hasPrivilegesFor(userAuthed,Role.ROLE_1));
 
     }
 }

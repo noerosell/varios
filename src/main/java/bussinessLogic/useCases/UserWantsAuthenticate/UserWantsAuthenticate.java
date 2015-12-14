@@ -1,29 +1,40 @@
 package bussinessLogic.useCases.UserWantsAuthenticate;
 
-import bussinessLogic.User;
-import bussinessLogic.Authenticator;
-import bussinessLogic.UserRepository;
+import Infrastructure.AuthenticationInMemoryRepository;
+import bussinessLogic.*;
 
 /**
  * Created by noe.rosell on 11/12/15.
  */
 public class UserWantsAuthenticate {
 
-    private UserRepository repository;
+    private UserRepository userRepository;
+    private AuthenticationRepository authenticationRepository;
+    private PermisionsRepository permisionsRepository;
 
-    public UserWantsAuthenticate(UserRepository receivedRepository)
+    public UserWantsAuthenticate(UserRepository receivedUserRepository, PermisionsRepository receivedPermisionsRepository, AuthenticationRepository receivedAuthenticationRepository)
     {
-        repository=receivedRepository;
+        userRepository =receivedUserRepository;
+        authenticationRepository=receivedAuthenticationRepository;
+        permisionsRepository=receivedPermisionsRepository;
     }
 
     public UserWantsAuthenticateResponse execute(UserWantsAuthenticateRequest request)
     {
         UserWantsAuthenticateResponse response=new UserWantsAuthenticateResponse();
-        response.isAnAuthUser=true;
-        User user=repository.getByLogin(request.username);
-        Authenticator authenticator=Authenticator.getInstance();
-        if (!authenticator.isAuthenticated(user)) {
+        response.isAnAuthUser=false;
+        User user= userRepository.getByLogin(request.username);
+        if (authenticationRepository.isEmpty()) {
+            Authenticator authenticator=new Authenticator();
             response.isAnAuthUser= authenticator.authenticate(user, request.password);
+        }
+        else
+        {
+            User authUser= authenticationRepository.get(user);
+            Authenticator authenticator=new Authenticator();
+            if (!authenticator.isAuthenticated(user,authUser)) {
+                response.isAnAuthUser= authenticator.authenticate(user, request.password);
+            }
         }
         return response;
     }

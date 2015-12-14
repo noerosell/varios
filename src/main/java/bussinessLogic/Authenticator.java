@@ -2,61 +2,30 @@ package bussinessLogic;
 
 import java.util.ArrayList;
 
+
+
 /**
  * Created by noe.rosell on 11/12/15.
  */
-public class Authenticator {
-
-    private int nextSessionId;
-
-    private ArrayList<Role> permisions=new ArrayList<Role>();
-    private ArrayList<User> usersAuthenticated=new ArrayList<User>();
-
-    private static Authenticator instance;
+public class Authenticator{
 
 
-    private Authenticator() {
-        //This is a Singleton, not constructor provided.
-        this.setUpPermissions();
-    }
-
-    //thread safe is a good enhacement, we have concurrence.
-    public synchronized static Authenticator getInstance() {
-        if (instance==null) {
-            instance=new Authenticator();
-            instance.setUpPermissions();
-        }
-        return instance;
+    public Authenticator() {
     }
 
     public boolean authenticate(User user,String password) {
         if (user.getPassword().equals(new String(password))) {
-            usersAuthenticated.add(user);
             return true;
         }
         return false;
     }
 
-    public int generateNewSessionid() {
-        return nextSessionId++;
+    public boolean isAuthenticated(User userWantsAuth, User userMaybeAuthed) {
+        return (userWantsAuth.getUsername()==userMaybeAuthed.getUsername());
     }
 
-    public boolean isAuthenticated(User user) {
-        if (usersAuthenticated.contains(user)) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean hasPrivilegesFor(User user,WebPage webPage) {
-        Role neededRole = permisions.get(new Integer(webPage.getValue()));
+    public boolean hasPrivilegesFor(User user, Role neededRole) {
         return user.hasRole(neededRole);
-    }
-
-    private void setUpPermissions() {
-        permisions.add(WebPage.PAGE_1.getValue(), Role.ROLE_1);
-        permisions.add(WebPage.PAGE_2.getValue(), Role.ROLE_2);
-        permisions.add(WebPage.PAGE_3.getValue(), Role.ROLE_3);
     }
 
 }

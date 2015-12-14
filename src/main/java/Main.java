@@ -1,3 +1,5 @@
+import Infrastructure.AuthenticationInMemoryRepository;
+import Infrastructure.PermisionsInMemoryRepository;
 import Infrastructure.UserInMemoryRepository;
 import bussinessLogic.User;
 import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticate;
@@ -18,7 +20,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import java.util.Base64;
 
 import com.google.gson.Gson;
-import org.eclipse.jetty.server.Request;
 
 import static spark.Spark.*;
 
@@ -27,12 +28,16 @@ public class Main {
     private static Gson GSON = new Gson();
     private static String requestingUser;
 
-
     public static void main(String[] args) {
             get("/api/user", (request, response) -> {
                 response.status(HttpStatus.OK_200);
                 return GSON.toJson("Message: wellcome to Api User, you can /api/user/create, /api/user/modify/{username}, /api/user/delete/{username}");
             });
+
+            get("/",(request,response) -> {
+                return true;
+            });
+
 
             post("/api/user/create/", (request,response) -> {
                 User inputUser;
@@ -130,9 +135,12 @@ public class Main {
             preAuth=preAuth.substring(preAuth.indexOf(" ")+1);
             byte[] authHeader=Base64.getMimeDecoder().decode(preAuth);
             String[] dataAuth=new String(authHeader).split(":");
+
             requestingUser=dataAuth[0];
-            UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
-            UserWantsAuthenticate useCase=new UserWantsAuthenticate(repository);
+            UserInMemoryRepository userRepository=UserInMemoryRepository.getInstance();
+            AuthenticationInMemoryRepository authRepository=AuthenticationInMemoryRepository.getInstance();
+            PermisionsInMemoryRepository permRepository=PermisionsInMemoryRepository.getInstance();
+            UserWantsAuthenticate useCase=new UserWantsAuthenticate(userRepository,permRepository,authRepository);
             UserWantsAuthenticateRequest requestUC=new UserWantsAuthenticateRequest(dataAuth[0],dataAuth[1]);
 
             UserWantsAuthenticateResponse responseUC=useCase.execute(requestUC);
