@@ -22,11 +22,15 @@ public class UserInMemoryRepository implements UserRepository {
       //This is a singleton
     };
 
-    public synchronized static UserInMemoryRepository getInstance()
+    public synchronized static UserInMemoryRepository getInstance() throws Exception
     {
         if (instance==null) {
             instance=new UserInMemoryRepository();
-            instance.initialFillUp();
+            try {
+                instance.initialFillUp();
+            }catch (Exception e) {
+                throw new Exception("Something nasty has ocurred initilizing in memory user repository");
+            }
         }
 
         return instance;
@@ -59,21 +63,19 @@ public class UserInMemoryRepository implements UserRepository {
 
     public boolean exists(String username) { return this.getByLogin(username)!=null;}
 
-    private void initialFillUp()
+    private void initialFillUp() throws Exception
     {
-
-
         Role[] rolesArray1={Role.ROLE_1};
         Role[] rolesArray2={Role.ROLE_2};
         Role[] rolesArray3={Role.ROLE_3};
         Role[] rolesArrayAdmin={Role.ROLE_ADMIN};
-        User user=new User("user1","password1",rolesArray1);
+        User user=new User("user1","Password1",rolesArray1);
         rows.add(user);
-        user=new User("user2","password2",rolesArray2);
+        user=new User("user2","Password2",rolesArray2);
         rows.add(user);
-        user=new User("user3","password3",rolesArray3);
+        user=new User("user3","Password3",rolesArray3);
         rows.add(user);
-        user=new User("admin","admin",rolesArrayAdmin);
+        user=new User("admin","Admin1",rolesArrayAdmin);
         rows.add(user);
     }
 }

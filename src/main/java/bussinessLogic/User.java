@@ -11,10 +11,9 @@ public class User {
     private String username;
     private String password;
     private Roles roles;
-    private int sessionId;
 
     protected String USERNAME_PATTERN = "^[a-z0-9_-]{4,16}$";
-    protected String PASSWORD_PATTERN = "((?=.*\\\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,16})";
+    protected String PASSWORD_PATTERN = "((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,16})";
 
 
     public User(String startlogin, String startPassword, Role[] startRoles) throws Exception
@@ -57,16 +56,6 @@ public class User {
         return username;
     }
 
-    public void setSessionId(int newSessionId)
-    {
-        sessionId=newSessionId;
-    }
-
-    public int getSessionId()
-    {
-        return sessionId;
-    }
-
     public boolean equals(Object obj) {
         return this.username.equals(((User)obj).username);
     }
@@ -80,7 +69,7 @@ public class User {
         matcher = pattern.matcher(startlogin);
         result= matcher.matches();
         pattern = Pattern.compile(PASSWORD_PATTERN);
-        matcher = pattern.matcher(startlogin);
+        matcher = pattern.matcher(startpasswd);
         result=result&&matcher.matches();
         result=result&&(startRoles.length>0);
         return result;
