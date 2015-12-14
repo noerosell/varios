@@ -3,7 +3,6 @@ package bussinessLogic.useCases.UserWantsCreateANewUser;
 import bussinessLogic.Role;
 import bussinessLogic.User;
 import bussinessLogic.UserRepository;
-import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticateResponse;
 
 /**
  * Created by noe.rosell on 11/12/15.
