@@ -61,7 +61,9 @@ public class UserInMemoryRepository implements UserRepository {
         return (rows.contains(user));
     }
 
-    public boolean exists(String username) { return this.getByLogin(username)!=null;}
+    public boolean exists(String username) {
+        return this.getByLogin(username)!=null;
+    }
 
     private void initialFillUp() throws Exception
     {

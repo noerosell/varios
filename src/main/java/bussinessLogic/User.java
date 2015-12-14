@@ -56,9 +56,9 @@ public class User {
         return username;
     }
 
-    public boolean equals(Object obj) {
-        return this.username.equals(((User)obj).username);
-    }
+   // public boolean equals(Object obj) {
+   //     return this.username.equals(((User)obj).username);
+   // }
 
     private boolean validate(String startlogin, String startpasswd, Role[] startRoles)
     {

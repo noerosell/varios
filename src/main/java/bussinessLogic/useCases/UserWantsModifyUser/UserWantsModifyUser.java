@@ -21,13 +21,18 @@ public class UserWantsModifyUser {
         User user=repository.getByLogin(request.authUser);
         UserWantsModifyUserResponse response=new UserWantsModifyUserResponse();
         response.roleAdminOk=false;
+        response.userCreated=false;
         if (user.hasRole(Role.ROLE_ADMIN) || true) {
             response.userModified=false;
             response.roleAdminOk=true;
             if (repository.exists(request.user)==true) {
-                repository.save(request.user);
+                response.userCreated=true;
+            }
+            else
+            {
                 response.userModified=true;
             }
+            repository.save(request.user);
         }
         return response;
     }

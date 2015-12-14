@@ -92,8 +92,8 @@ public class Main {
                     if (responseUC.userModified) {
                         response.status(HttpStatus.NO_CONTENT_204);
                     } else {
-                        response.status(HttpStatus.NOT_FOUND_404);
-                        return "Not exists.";
+                        response.status(HttpStatus.CREATED_201);
+                        return "Not existent, created";
                     }
                 }
                 else

@@ -5,5 +5,6 @@ package bussinessLogic.useCases.UserWantsModifyUser;
  */
 public class UserWantsModifyUserResponse {
     public boolean userModified;
+    public boolean userCreated;
     public boolean roleAdminOk;
 }
