@@ -1,7 +1,8 @@
 package bussinessLogic.useCases.UserWantsAuthenticate;
 
-import Infrastructure.AuthenticationInMemoryRepository;
 import bussinessLogic.*;
+import bussinessLogic.authenticator.AuthenticationRepository;
+import bussinessLogic.authenticator.Authenticator;
 
 /**
  * Created by noe.rosell on 11/12/15.
@@ -19,19 +20,18 @@ public class UserWantsAuthenticate {
         permisionsRepository=receivedPermisionsRepository;
     }
 
-    public UserWantsAuthenticateResponse execute(UserWantsAuthenticateRequest request)
+    public UserWantsAuthenticateResponse execute(UserWantsAuthenticateRequest request, Authenticator authenticator)
     {
         UserWantsAuthenticateResponse response=new UserWantsAuthenticateResponse();
         response.isAnAuthUser=false;
         User user= userRepository.getByLogin(request.username);
+
         if (authenticationRepository.isEmpty()) {
-            Authenticator authenticator=new Authenticator();
             response.isAnAuthUser= authenticator.authenticate(user, request.password);
         }
         else
         {
             User authUser= authenticationRepository.get(user);
-            Authenticator authenticator=new Authenticator();
             if (!authenticator.isAuthenticated(user,authUser)) {
                 response.isAnAuthUser= authenticator.authenticate(user, request.password);
             }

@@ -1,5 +1,7 @@
 package bussinessLogic;
 
+import bussinessLogic.authenticator.Authenticator;
+import bussinessLogic.authenticator.SimpleAuthenticator;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
@@ -18,7 +20,7 @@ public class AuthenticatorTest {
     public void setUp() throws Exception {
         userAuthed=mock(User.class);
         userWantsAuth=mock(User.class);
-        authenticator=new Authenticator();
+        authenticator=new SimpleAuthenticator();
     }
 
     @Test

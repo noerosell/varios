@@ -1,154 +1,24 @@
-import Infrastructure.AuthenticationInMemoryRepository;
-import Infrastructure.PermisionsInMemoryRepository;
-import Infrastructure.UserInMemoryRepository;
-import bussinessLogic.User;
-import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticate;
-import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticateRequest;
-import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticateResponse;
-import bussinessLogic.useCases.UserWantsCreateANewUser.UserWantsCreateANewUser;
-import bussinessLogic.useCases.UserWantsCreateANewUser.UserWantsCreateANewUserRequest;
-import bussinessLogic.useCases.UserWantsCreateANewUser.UserWantsCreateANewUserResponse;
-import bussinessLogic.useCases.UserWantsDeleteUser.UserWantsDeleteAUser;
-import bussinessLogic.useCases.UserWantsDeleteUser.UserWantsDeleteAUserRequest;
-import bussinessLogic.useCases.UserWantsDeleteUser.UserWantsDeleteAUserResponse;
-import bussinessLogic.useCases.UserWantsModifyUser.UserWantsModifyUser;
-import bussinessLogic.useCases.UserWantsModifyUser.UserWantsModifyUserRequest;
-import bussinessLogic.useCases.UserWantsModifyUser.UserWantsModifyUserResponse;
-import com.google.gson.JsonSyntaxException;
-import org.eclipse.jetty.http.HttpStatus;
+import com.sun.net.httpserver.HttpServer;
 
-import java.util.Base64;
-
-import com.google.gson.Gson;
-
-import static spark.Spark.*;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 
 public class Main {
 
-    private static Gson GSON = new Gson();
-    private static String requestingUser;
+    private static int PORT = 8000;
 
-    public static void main(String[] args) {
-            get("/api/user", (request, response) -> {
-                response.status(HttpStatus.OK_200);
-                return GSON.toJson("Message: wellcome to Api User, you can /api/user/create, /api/user/modify/{username}, /api/user/delete/{username}");
-            });
-
-            get("/",(request,response) -> {
-                return true;
-            });
-
-
-            post("/api/user/create/", (request,response) -> {
-                User inputUser;
-
-                try {
-                    inputUser = GSON.fromJson(request.body(), User.class);
-                }catch (JsonSyntaxException e) {
-                    response.status(HttpStatus.BAD_REQUEST_400);
-                    return "Invalid format or data received ";
-                }
-                UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
-                UserWantsCreateANewUserResponse responseUC=new UserWantsCreateANewUserResponse();
-                UserWantsCreateANewUserRequest requestUC=new UserWantsCreateANewUserRequest(
-                        inputUser,
-                        requestingUser);
-                UserWantsCreateANewUser useCase=new UserWantsCreateANewUser(repository);
-                responseUC=useCase.execute(requestUC);
-
-                if (responseUC.roleAdminOk) {
-                    if (responseUC.userCreated) {
-                        response.status(HttpStatus.CREATED_201);
-                    } else {
-                        response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
-                        return "Allready exists.";
-                    }
-                }
-                else
-                {
-                    response.status(HttpStatus.UNAUTHORIZED_401);
-                    return "You don't have admin role";
-                }
-                return true;
-            });
-
-
-            put("/api/user/modify/",(request,response) -> {
-                User inputUser;
-                try {
-                    inputUser = GSON.fromJson(request.body(), User.class);
-                }catch (JsonSyntaxException e) {
-                    response.status(HttpStatus.BAD_REQUEST_400);
-                    return "INVALID JSON";
-                }
-                UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
-                UserWantsModifyUserResponse responseUC=new UserWantsModifyUserResponse();
-                UserWantsModifyUserRequest requestUC=new UserWantsModifyUserRequest(
-                        inputUser,
-                        requestingUser);
-                UserWantsModifyUser useCase=new UserWantsModifyUser(repository);
-                responseUC=useCase.execute(requestUC);
-                if (responseUC.roleAdminOk) {
-                    if (responseUC.userModified) {
-                        response.status(HttpStatus.NO_CONTENT_204);
-                    } else {
-                        response.status(HttpStatus.CREATED_201);
-                        return "Not existent, created";
-                    }
-                }
-                else
-                {
-                    response.status(HttpStatus.UNAUTHORIZED_401);
-                    return "You don't have admin role";
-                }
-                return true;
-            });
-
-        delete("/api/user/delete/:username",(request,response)-> {
-            String username= request.params("username");
-            UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
-            UserWantsDeleteAUserResponse responseUC=new UserWantsDeleteAUserResponse();
-            UserWantsDeleteAUserRequest requestUC=new UserWantsDeleteAUserRequest();
-            requestUC.username=username;
-            requestUC.authUser=requestingUser;
-            UserWantsDeleteAUser useCase=new UserWantsDeleteAUser(repository);
-            responseUC = useCase.execute(requestUC);
-            if (responseUC.roleAdminOk) {
-                if (responseUC.userDeleted) {
-                    response.status(HttpStatus.NO_CONTENT_204);
-                } else {
-                    response.status(HttpStatus.NOT_FOUND_404);
-                    return "Not exists.";
-                }
+    public static void main(String[] args) throws IOException{
+                HttpServer httpServer = HttpServer.create(new InetSocketAddress(PORT), 0);
+                httpServer.createContext("/api/user", new HelloApiController());
+                httpServer.createContext("/api/user/create", new CreateApiController());
+                httpServer.createContext("/api/user/modify", new ModifyApiController());
+                httpServer.createContext("/api/user/delete", new DeleteApiController());
+                httpServer.createContext("/login", new LoginController());
+                httpServer.createContext("/logout", new LogoutController());
+                httpServer.createContext("/page", new PageController());
+                httpServer.setExecutor(null);
+                httpServer.start();
             }
-            else
-            {
-                response.status(HttpStatus.UNAUTHORIZED_401);
-                return "You don't have admin role";
-            }
-            return true;
-        });
-
-        before(((request, response) -> {
-
-            String preAuth=request.headers("Authorization");
-            preAuth=preAuth.substring(preAuth.indexOf(" ")+1);
-            byte[] authHeader=Base64.getMimeDecoder().decode(preAuth);
-            String[] dataAuth=new String(authHeader).split(":");
-
-            requestingUser=dataAuth[0];
-            UserInMemoryRepository userRepository=UserInMemoryRepository.getInstance();
-            AuthenticationInMemoryRepository authRepository=AuthenticationInMemoryRepository.getInstance();
-            PermisionsInMemoryRepository permRepository=PermisionsInMemoryRepository.getInstance();
-            UserWantsAuthenticate useCase=new UserWantsAuthenticate(userRepository,permRepository,authRepository);
-            UserWantsAuthenticateRequest requestUC=new UserWantsAuthenticateRequest(dataAuth[0],dataAuth[1]);
-
-            UserWantsAuthenticateResponse responseUC=useCase.execute(requestUC);
-            if (!responseUC.isAnAuthUser) {
-                halt(401, "unauthorized");
-            }
-            requestingUser=dataAuth[0];
-        }));
         }
-
     }
+}

@@ -1,19 +1,19 @@
-package bussinessLogic;
+package bussinessLogic.authenticator;
 
-import java.util.ArrayList;
-
+import bussinessLogic.Role;
+import bussinessLogic.User;
 
 
 /**
  * Created by noe.rosell on 11/12/15.
  */
-public class Authenticator{
+public class SimpleAuthenticator implements Authenticator{
 
 
-    public Authenticator() {
+    public SimpleAuthenticator() {
     }
 
-    public boolean authenticate(User user,String password) {
+    public boolean authenticate(User user, String password) {
         if (user.getPassword().equals(new String(password))) {
             return true;
         }

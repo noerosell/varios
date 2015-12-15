@@ -1,4 +1,6 @@
-package bussinessLogic;
+package bussinessLogic.authenticator;
+
+import bussinessLogic.User;
 
 /**
  * Created by noe.rosell on 14/12/15.
