@@ -1,164 +1,129 @@
 package UserRestAPi;
+
+import Domain.User;
+import Domain.authenticator.SimpleAuthenticator;
+import Domain.useCases.UserWantsAuthenticate.UserWantsAuthenticate;
+import Domain.useCases.UserWantsAuthenticate.UserWantsAuthenticateRequest;
+import Domain.useCases.UserWantsAuthenticate.UserWantsAuthenticateResponse;
 import Infrastructure.AuthenticationInMemoryRepository;
 import Infrastructure.PermisionsInMemoryRepository;
 import Infrastructure.UserInMemoryRepository;
-import bussinessLogic.authenticator.SimpleAuthenticator;
-import bussinessLogic.User;
-import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticate;
-import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticateRequest;
-import bussinessLogic.useCases.UserWantsAuthenticate.UserWantsAuthenticateResponse;
-import bussinessLogic.useCases.UserWantsCreateANewUser.UserWantsCreateANewUser;
-import bussinessLogic.useCases.UserWantsCreateANewUser.UserWantsCreateANewUserRequest;
-import bussinessLogic.useCases.UserWantsCreateANewUser.UserWantsCreateANewUserResponse;
-import bussinessLogic.useCases.UserWantsDeleteUser.UserWantsDeleteAUser;
-import bussinessLogic.useCases.UserWantsDeleteUser.UserWantsDeleteAUserRequest;
-import bussinessLogic.useCases.UserWantsDeleteUser.UserWantsDeleteAUserResponse;
-import bussinessLogic.useCases.UserWantsModifyUser.UserWantsModifyUser;
-import bussinessLogic.useCases.UserWantsModifyUser.UserWantsModifyUserRequest;
-import bussinessLogic.useCases.UserWantsModifyUser.UserWantsModifyUserResponse;
+import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import org.eclipse.jetty.http.HttpStatus;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
-
-import com.google.gson.Gson;
-
-import static spark.Spark.*;
 
 
 /**
  * Created by noe.rosell on 15/12/15.
  */
-public class ControllerApiBase {
+abstract public class ControllerApiBase implements HttpHandler {
+
+    private HttpExchange httpExchange;
+
+    protected static String requestingUser;
+
+    protected Gson GSON = new Gson();
+
+    @Override
+    public void handle(HttpExchange httpExchange) throws IOException {
+
+        this.httpExchange = httpExchange;
+        Headers requestHeaders = httpExchange.getRequestHeaders();
+
+        if (!this.isCorrectContentNegotiation(requestHeaders)) {
+            this.sendResponse(HttpStatus.NOT_IMPLEMENTED_501, "Sorry, only json is accepted");
+        }
+
+        String[] dataAuth = this.getAuthorizationData(requestHeaders);
+        UserInMemoryRepository userRepository;
+        AuthenticationInMemoryRepository authRepository;
+        PermisionsInMemoryRepository permRepository;
+
+        requestingUser = dataAuth[0];
+        try {
+
+            userRepository = UserInMemoryRepository.getInstance();
+            authRepository = AuthenticationInMemoryRepository.getInstance();
+            permRepository = PermisionsInMemoryRepository.getInstance();
+
+            UserWantsAuthenticate useCase = new UserWantsAuthenticate(userRepository, permRepository, authRepository);
+            UserWantsAuthenticateRequest requestUC = new UserWantsAuthenticateRequest(dataAuth[0], dataAuth[1]);
+
+            UserWantsAuthenticateResponse responseUC = useCase.execute(requestUC, new SimpleAuthenticator());
+            if (!responseUC.isAnAuthUser) {
+                String response = "Bad username or password";
+                httpExchange.sendResponseHeaders(HttpStatus.UNAUTHORIZED_401, response.length());
+            }
+            requestingUser = dataAuth[0];
+            this.takeAction(httpExchange);
+        } catch (Exception e) {
+            String response = e.getMessage();
+            httpExchange.sendResponseHeaders(HttpStatus.SERVICE_UNAVAILABLE_503, response.length());
+        }
 
 
-    private static Gson GSON = new Gson();
-    private static String requestingUser;
-
-    public void ControllerApiBase()
-    {
     }
 
-    public void routeApiRequest()
-    {
-        get("/api/user", (request, response) -> {
-            response.status(HttpStatus.OK_200);
-            return GSON.toJson("Message: wellcome to Api User, you can /api/user/create, /api/user/modify/{username}, /api/user/delete/{username}");
-        });
+    protected String[] getAuthorizationData(Headers requestHeaders) {
+        String preAuth = requestHeaders.getFirst("Authorization");
+        preAuth = preAuth.substring(preAuth.indexOf(" ") + 1);
+        byte[] authHeader = Base64.getMimeDecoder().decode(preAuth);
+        return new String(authHeader).split(":");
+    }
 
-        get("/",(request,response) -> {
-            return true;
-        });
-
-        post("/api/user/create/", (request,response) -> {
-            User inputUser;
-
-            try {
-                inputUser = GSON.fromJson(request.body(), User.class);
-            }catch (JsonSyntaxException e) {
-                response.status(HttpStatus.BAD_REQUEST_400);
-                return "Invalid format or data received ";
+    protected boolean isCorrectContentNegotiation(Headers requestHeaders) throws IOException {
+        String[] contentTypes = requestHeaders.getFirst("Content-type").split(";");
+        for (String contentType : contentTypes
+                ) {
+            if (contentType.equals("application/json")) {
+                return true;
             }
-            UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
-            UserWantsCreateANewUserResponse responseUC=new UserWantsCreateANewUserResponse();
-            UserWantsCreateANewUserRequest requestUC=new UserWantsCreateANewUserRequest(
-                    inputUser,
-                    requestingUser);
-            UserWantsCreateANewUser useCase=new UserWantsCreateANewUser(repository);
-            responseUC=useCase.execute(requestUC);
+        }
+        return false;
+    }
 
-            if (responseUC.roleAdminOk) {
-                if (responseUC.userCreated) {
-                    response.status(HttpStatus.CREATED_201);
-                } else {
-                    response.status(HttpStatus.UNPROCESSABLE_ENTITY_422);
-                    return "Allready exists.";
-                }
-            }
-            else
-            {
-                response.status(HttpStatus.UNAUTHORIZED_401);
-                return "You don't have admin role";
-            }
-            return true;
-        });
+    protected void takeAction(HttpExchange httpExchange) throws Exception {
+    }
 
+    protected String getBodyRequest(InputStream is) throws IOException {
+        String bodyRequest;
+        StringBuilder buf;
+        int b;
+        is = httpExchange.getRequestBody();
+        buf = new StringBuilder();
+        while ((b = is.read()) != -1) {
+            buf.append((char) b);
+        }
+        is.close();
+        bodyRequest = buf.toString();
+        return bodyRequest;
+    }
 
-        put("/api/user/modify/",(request,response) -> {
-            User inputUser;
-            try {
-                inputUser = GSON.fromJson(request.body(), User.class);
-            }catch (JsonSyntaxException e) {
-                response.status(HttpStatus.BAD_REQUEST_400);
-                return "INVALID JSON";
-            }
-            UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
-            UserWantsModifyUserResponse responseUC=new UserWantsModifyUserResponse();
-            UserWantsModifyUserRequest requestUC=new UserWantsModifyUserRequest(
-                    inputUser,
-                    requestingUser);
-            UserWantsModifyUser useCase=new UserWantsModifyUser(repository);
-            responseUC=useCase.execute(requestUC);
-            if (responseUC.roleAdminOk) {
-                if (responseUC.userModified) {
-                    response.status(HttpStatus.NO_CONTENT_204);
-                } else {
-                    response.status(HttpStatus.CREATED_201);
-                    return "Not existent, created";
-                }
-            }
-            else
-            {
-                response.status(HttpStatus.UNAUTHORIZED_401);
-                return "You don't have admin role";
-            }
-            return true;
-        });
+    protected void sendResponse(int httpStatusCode, String responseBody) throws IOException {
+        Headers responseHeaders = httpExchange.getResponseHeaders();
+        responseHeaders.set("Content-Type", "application/json");
+        httpExchange.sendResponseHeaders(httpStatusCode, responseBody.getBytes().length);
+        httpExchange.getResponseBody().write(responseBody.getBytes());
+        httpExchange.close();
+    }
 
-        delete("/api/user/delete/:username",(request,response)-> {
-            String username= request.params("username");
-            UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
-            UserWantsDeleteAUserResponse responseUC=new UserWantsDeleteAUserResponse();
-            UserWantsDeleteAUserRequest requestUC=new UserWantsDeleteAUserRequest();
-            requestUC.username=username;
-            requestUC.authUser=requestingUser;
-            UserWantsDeleteAUser useCase=new UserWantsDeleteAUser(repository);
-            responseUC = useCase.execute(requestUC);
-            if (responseUC.roleAdminOk) {
-                if (responseUC.userDeleted) {
-                    response.status(HttpStatus.NO_CONTENT_204);
-                } else {
-                    response.status(HttpStatus.NOT_FOUND_404);
-                    return "Not exists.";
-                }
-            }
-            else
-            {
-                response.status(HttpStatus.UNAUTHORIZED_401);
-                return "You don't have admin role";
-            }
-            return true;
-        });
-
-        before(((request, response) -> {
-
-            String preAuth=request.headers("Authorization");
-            preAuth=preAuth.substring(preAuth.indexOf(" ")+1);
-            byte[] authHeader=Base64.getMimeDecoder().decode(preAuth);
-            String[] dataAuth=new String(authHeader).split(":");
-
-            requestingUser=dataAuth[0];
-            UserInMemoryRepository userRepository=UserInMemoryRepository.getInstance();
-            AuthenticationInMemoryRepository authRepository=AuthenticationInMemoryRepository.getInstance();
-            PermisionsInMemoryRepository permRepository=PermisionsInMemoryRepository.getInstance();
-            UserWantsAuthenticate useCase=new UserWantsAuthenticate(userRepository,permRepository,authRepository);
-            UserWantsAuthenticateRequest requestUC=new UserWantsAuthenticateRequest(dataAuth[0],dataAuth[1]);
-
-            UserWantsAuthenticateResponse responseUC=useCase.execute(requestUC,new SimpleAuthenticator());
-            if (!responseUC.isAnAuthUser) {
-                halt(401, "unauthorized");
-            }
-            requestingUser=dataAuth[0];
-        }));
+    protected User getUserFromPayload(HttpExchange httpExchange) throws IOException {
+        User inputUser;
+        try {
+            String bodyRequest = this.getBodyRequest(httpExchange.getRequestBody());
+            inputUser = GSON.fromJson(bodyRequest, User.class);
+        } catch (JsonSyntaxException e) {
+            inputUser = (User) null;
+            String response = GSON.toJson("Invalid format or data received ");
+            this.sendResponse(HttpStatus.BAD_REQUEST_400, response);
+        }
+        return inputUser;
     }
 }

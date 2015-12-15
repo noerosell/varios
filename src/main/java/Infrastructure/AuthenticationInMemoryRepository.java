@@ -1,7 +1,7 @@
 package Infrastructure;
 
-import bussinessLogic.authenticator.AuthenticationRepository;
-import bussinessLogic.User;
+import Domain.User;
+import Domain.authenticator.AuthenticationRepository;
 
 import java.util.ArrayList;
 

@@ -1,8 +1,8 @@
 package Infrastructure;
 
-import bussinessLogic.PermisionsRepository;
-import bussinessLogic.Role;
-import bussinessLogic.WebPage;
+import Domain.PermisionsRepository;
+import Domain.Role;
+import Domain.WebPage;
 
 import java.util.ArrayList;
 

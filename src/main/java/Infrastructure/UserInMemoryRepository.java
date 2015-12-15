@@ -1,8 +1,8 @@
 package Infrastructure;
 
-import bussinessLogic.Role;
-import bussinessLogic.User;
-import bussinessLogic.UserRepository;
+import Domain.Role;
+import Domain.User;
+import Domain.UserRepository;
 
 import java.util.ArrayList;
 
