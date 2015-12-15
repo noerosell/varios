@@ -32,4 +32,19 @@ Existents users are:
 * user3:Password3
 * admin:Admin1
 
+### Build
+
+```sh
+mvn package
+```
+
+### execute
+
+```sh
+java -cp ./target/my-test/my-test-0.1.jar Main
+```
+
+
+
+
 
