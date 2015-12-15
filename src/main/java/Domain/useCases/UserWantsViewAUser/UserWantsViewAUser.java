@@ -21,7 +21,7 @@ public class UserWantsViewAUser {
         User user=repository.getByLogin(request.authUser);
         UserWantsViewAUserResponse response=new UserWantsViewAUserResponse();
         response.roleAdminOk=false;
-        if (user.hasRole(Role.ROLE_ADMIN) || true) {
+        if (user.hasRole(Role.ROLE_ADMIN)) {
             response.roleAdminOk=true;
             if (repository.exists(request.username)==true) {
                 response.user=repository.getByLogin(request.username);

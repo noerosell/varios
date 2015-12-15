@@ -22,7 +22,7 @@ public class UserWantsModifyUser {
         UserWantsModifyUserResponse response=new UserWantsModifyUserResponse();
         response.roleAdminOk=false;
         response.userCreated=false;
-        if (user.hasRole(Role.ROLE_ADMIN) || true) {
+        if (user.hasRole(Role.ROLE_ADMIN)) {
             response.userModified=false;
             response.roleAdminOk=true;
             if (repository.exists(request.user)==true) {
