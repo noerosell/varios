@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsAuthenticate;
+package useCases.UserWantsAuthenticate;
 
 /**
  * Created by noe.rosell on 13/12/15.

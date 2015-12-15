@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsDeleteUser;
+package useCases.UserWantsDeleteUser;
 
 /**
  * Created by noe.rosell on 14/12/15.

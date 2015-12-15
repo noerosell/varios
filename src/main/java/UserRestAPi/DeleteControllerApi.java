@@ -1,8 +1,8 @@
 package UserRestAPi;
 
-import Domain.useCases.UserWantsDeleteUser.UserWantsDeleteAUser;
-import Domain.useCases.UserWantsDeleteUser.UserWantsDeleteAUserRequest;
-import Domain.useCases.UserWantsDeleteUser.UserWantsDeleteAUserResponse;
+import useCases.UserWantsDeleteUser.UserWantsDeleteAUser;
+import useCases.UserWantsDeleteUser.UserWantsDeleteAUserRequest;
+import useCases.UserWantsDeleteUser.UserWantsDeleteAUserResponse;
 import Infrastructure.UserInMemoryRepository;
 import com.sun.net.httpserver.HttpExchange;
 import org.eclipse.jetty.http.HttpStatus;

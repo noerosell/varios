@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsAuthenticate;
+package useCases.UserWantsAuthenticate;
 
 import Domain.*;
 import Domain.authenticator.AuthenticationRepository;

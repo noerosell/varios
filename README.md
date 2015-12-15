@@ -1,4 +1,5 @@
 # DDD Aproach for a simple users REST api
+
 ### To get information about a user
 
 ```sh

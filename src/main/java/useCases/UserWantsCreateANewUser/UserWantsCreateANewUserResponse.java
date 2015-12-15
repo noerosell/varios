@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsCreateANewUser;
+package useCases.UserWantsCreateANewUser;
 
 /**
  * Created by noe.rosell on 13/12/15.

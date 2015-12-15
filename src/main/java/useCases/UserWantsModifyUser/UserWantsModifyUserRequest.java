@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsModifyUser;
+package useCases.UserWantsModifyUser;
 
 import Domain.User;
 

@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsViewAUser;
+package useCases.UserWantsViewAUser;
 
 /**
  * Created by noe.rosell on 14/12/15.

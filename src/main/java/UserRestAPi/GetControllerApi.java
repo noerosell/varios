@@ -1,9 +1,9 @@
 package UserRestAPi;
 
 import Domain.User;
-import Domain.useCases.UserWantsViewAUser.UserWantsViewAUser;
-import Domain.useCases.UserWantsViewAUser.UserWantsViewAUserRequest;
-import Domain.useCases.UserWantsViewAUser.UserWantsViewAUserResponse;
+import useCases.UserWantsViewAUser.UserWantsViewAUser;
+import useCases.UserWantsViewAUser.UserWantsViewAUserRequest;
+import useCases.UserWantsViewAUser.UserWantsViewAUserResponse;
 import Infrastructure.UserInMemoryRepository;
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;

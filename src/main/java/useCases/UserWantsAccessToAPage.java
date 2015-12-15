@@ -1,4 +1,4 @@
-package Domain.useCases;
+package useCases;
 
 import Domain.PermisionsRepository;
 import Domain.Role;
