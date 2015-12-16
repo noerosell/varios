@@ -36,13 +36,13 @@ Existents users are:
 ### Build
 
 ```sh
-mvn package
+mvn clean install
 ```
 
 ### execute
 
 ```sh
-java -cp ./target/my-test/my-test-0.1.jar Main
+java -jar ./target/my-test/my-test-0.1.jar
 ```
 
 
