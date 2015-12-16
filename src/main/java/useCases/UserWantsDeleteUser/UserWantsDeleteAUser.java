@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsDeleteUser;
+package useCases.UserWantsDeleteUser;
 
 import Domain.Role;
 import Domain.User;

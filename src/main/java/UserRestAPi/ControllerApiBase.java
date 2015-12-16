@@ -2,9 +2,9 @@ package UserRestAPi;
 
 import Domain.User;
 import Domain.authenticator.SimpleAuthenticator;
-import Domain.useCases.UserWantsAuthenticate.UserWantsAuthenticate;
-import Domain.useCases.UserWantsAuthenticate.UserWantsAuthenticateRequest;
-import Domain.useCases.UserWantsAuthenticate.UserWantsAuthenticateResponse;
+import useCases.UserWantsAuthenticate.UserWantsAuthenticate;
+import useCases.UserWantsAuthenticate.UserWantsAuthenticateRequest;
+import useCases.UserWantsAuthenticate.UserWantsAuthenticateResponse;
 import Infrastructure.AuthenticationInMemoryRepository;
 import Infrastructure.PermisionsInMemoryRepository;
 import Infrastructure.UserInMemoryRepository;

@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsViewAUser;
+package useCases.UserWantsViewAUser;
 
 import Domain.User;
 

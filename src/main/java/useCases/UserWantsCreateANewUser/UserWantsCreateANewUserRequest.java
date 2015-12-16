@@ -1,4 +1,4 @@
-package Domain.useCases.UserWantsCreateANewUser;
+package useCases.UserWantsCreateANewUser;
 
 import Domain.User;
 

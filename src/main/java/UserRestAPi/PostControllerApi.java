@@ -1,9 +1,9 @@
 package UserRestAPi;
 
 import Domain.User;
-import Domain.useCases.UserWantsCreateANewUser.UserWantsCreateANewUser;
-import Domain.useCases.UserWantsCreateANewUser.UserWantsCreateANewUserRequest;
-import Domain.useCases.UserWantsCreateANewUser.UserWantsCreateANewUserResponse;
+import useCases.UserWantsCreateANewUser.UserWantsCreateANewUser;
+import useCases.UserWantsCreateANewUser.UserWantsCreateANewUserRequest;
+import useCases.UserWantsCreateANewUser.UserWantsCreateANewUserResponse;
 import Infrastructure.UserInMemoryRepository;
 import com.sun.net.httpserver.HttpExchange;
 import org.eclipse.jetty.http.HttpStatus;
