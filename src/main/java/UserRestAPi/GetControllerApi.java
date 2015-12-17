@@ -38,7 +38,7 @@ public class GetControllerApi extends ControllerApiBase {
         if (httpExchange.getRequestMethod().equals("GET")) {
             String[] path = httpExchange.getRequestURI().getPath().split("/");
             String username = path[path.length - 1];
-            UserInMemoryRepository repository = UserInMemoryRepository.getInstance();
+            UserInMemoryRepository repository = new UserInMemoryRepository();
             UserWantsViewAUserRequest requestUC = new UserWantsViewAUserRequest(username,this.requestingUser);
             UserWantsViewAUser useCase = new UserWantsViewAUser(repository);
             UserWantsViewAUserResponse responseUC = useCase.execute(requestUC);

@@ -15,14 +15,12 @@ import java.io.IOException;
  */
 public class PutControllerApi extends ControllerApiBase {
 
-    //private static Gson GSON = new Gson();
-
     public void takeAction(HttpExchange httpExchange) throws Exception,IOException {
 
         User inputUser;
         inputUser = this.getUserFromPayload(httpExchange);
 
-        UserInMemoryRepository repository = UserInMemoryRepository.getInstance();
+        UserInMemoryRepository repository = new UserInMemoryRepository();
         UserWantsModifyUserRequest requestUC = new UserWantsModifyUserRequest(
                 inputUser,
                 requestingUser);

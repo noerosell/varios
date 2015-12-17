@@ -27,7 +27,7 @@ public class PostControllerApi extends PutControllerApi {
         User inputUser;
         inputUser = this.getUserFromPayload(httpExchange);
 
-        UserInMemoryRepository repository=UserInMemoryRepository.getInstance();
+        UserInMemoryRepository repository=new UserInMemoryRepository();
         UserWantsCreateANewUserRequest requestUC=new UserWantsCreateANewUserRequest(
                 inputUser,
                 this.requestingUser);

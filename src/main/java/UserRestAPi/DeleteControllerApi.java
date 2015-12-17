@@ -18,7 +18,7 @@ public class DeleteControllerApi extends ControllerApiBase {
 
         String[] path = httpExchange.getRequestURI().getPath().split("/");
         String username = path[path.length - 1];
-        UserInMemoryRepository repository = UserInMemoryRepository.getInstance();
+        UserInMemoryRepository repository = new UserInMemoryRepository();
         UserWantsDeleteAUserRequest requestUC = new UserWantsDeleteAUserRequest();
         requestUC.username = username;
         requestUC.authUser = this.requestingUser;

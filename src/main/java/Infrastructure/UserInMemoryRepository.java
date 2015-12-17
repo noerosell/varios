@@ -14,27 +14,17 @@ import java.util.ArrayList;
 public class UserInMemoryRepository implements UserRepository {
 
 
-    private ArrayList<User> rows=new ArrayList<User>();
+    private static ArrayList<User> rows=new ArrayList<User>();
 
-    private static UserInMemoryRepository instance=null;
 
-    private UserInMemoryRepository() {
-      //This is a singleton
+    public UserInMemoryRepository() throws Exception{
+        try {
+            this.initialFillUp();
+        }catch (Exception e) {
+            throw new Exception("Something nasty has ocurred initilizing in memory user repository");
+        }
     };
 
-    public synchronized static UserInMemoryRepository getInstance() throws Exception
-    {
-        if (instance==null) {
-            instance=new UserInMemoryRepository();
-            try {
-                instance.initialFillUp();
-            }catch (Exception e) {
-                throw new Exception("Something nasty has ocurred initilizing in memory user repository");
-            }
-        }
-
-        return instance;
-    }
 
     public User getByLogin(String login) {
 

@@ -49,9 +49,9 @@ abstract public class ControllerApiBase implements HttpHandler {
         requestingUser = dataAuth[0];
         try {
 
-            userRepository = UserInMemoryRepository.getInstance();
-            authRepository = AuthenticationInMemoryRepository.getInstance();
-            permRepository = PermisionsInMemoryRepository.getInstance();
+            userRepository = new UserInMemoryRepository();
+            authRepository = new AuthenticationInMemoryRepository();
+            permRepository = new PermisionsInMemoryRepository();;
 
             UserWantsAuthenticate useCase = new UserWantsAuthenticate(userRepository, permRepository, authRepository);
             UserWantsAuthenticateRequest requestUC = new UserWantsAuthenticateRequest(dataAuth[0], dataAuth[1]);
