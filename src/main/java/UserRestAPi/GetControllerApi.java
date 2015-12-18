@@ -1,12 +1,16 @@
 package UserRestAPi;
 
+import Domain.User;
+import Infrastructure.Presenter.PresenterResponse;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsViewAUser.UserWantsViewAUser;
 import useCases.UserWantsViewAUser.UserWantsViewAUserRequest;
 import useCases.UserWantsViewAUser.UserWantsViewAUserResponse;
 import Infrastructure.UserInMemoryRepository;
+import Infrastructure.Presenter.getPresenterStrategy;
 import com.sun.net.httpserver.HttpExchange;
 import org.eclipse.jetty.http.HttpStatus;
+
 import java.io.IOException;
 
 
@@ -28,20 +32,9 @@ public class GetControllerApi extends ControllerApiBase {
             UserWantsViewAUser useCase = new UserWantsViewAUser(repository);
             UserWantsViewAUserResponse responseUC = useCase.execute(requestUC);
 
-            if (responseUC.roleAdminOk && responseUC.user!=null)
-            {
-                String response=GSON.toJson(responseUC.user);
-                this.sendResponse(HttpStatus.OK_200,response);
-            }
-            else if (!responseUC.roleAdminOk) {
+            PresenterResponse responseST=new getPresenterStrategy(responseUC.roleAdminOk,responseUC.user);
+            this.sendResponse(responseST.httpStatus,responseST.message);
 
-                String response = GSON.toJson("You don't have admin role");
-                this.sendResponse(HttpStatus.UNAUTHORIZED_401,response);
-            }
-            else
-            {
-                this.sendResponse(HttpStatus.NOT_FOUND_404, "");
-            }
         }
         else
         {
