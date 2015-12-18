@@ -2,6 +2,7 @@ package UserRestAPi;
 
 import Domain.User;
 import Domain.authenticator.SimpleAuthenticator;
+import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsAuthenticate.UserWantsAuthenticate;
 import useCases.UserWantsAuthenticate.UserWantsAuthenticateRequest;
 import useCases.UserWantsAuthenticate.UserWantsAuthenticateResponse;

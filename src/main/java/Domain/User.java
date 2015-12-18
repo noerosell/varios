@@ -8,17 +8,16 @@ import java.util.regex.Pattern;
  */
 public class User {
 
-    private String username;
+    private UserIdentity username;
     private String password;
     private Roles roles;
 
-    protected transient String USERNAME_PATTERN = "^[a-z0-9_-]{4,16}$";
     protected transient String PASSWORD_PATTERN = "((?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,16})";
 
 
-    public User(String startlogin, String startPassword, Role[] startRoles) throws Exception
+    public User(UserIdentity startlogin, String startPassword, Role[] startRoles) throws Exception
     {
-        if (!this.validate(startlogin,startPassword,startRoles)) {
+        if (!this.validate(startPassword,startRoles)) {
             throw new Exception("Data not valid");
         }
         username =startlogin;
@@ -53,23 +52,28 @@ public class User {
 
     public String getUsername()
     {
-        return username;
+        return username.username();
     }
 
     public Roles getRoles() {return roles;}
 
-    private boolean validate(String startlogin, String startpasswd, Role[] startRoles)
+    private boolean validate( String startpasswd, Role[] startRoles)
     {
         Pattern pattern;
         Matcher matcher;
         boolean result;
-        pattern = Pattern.compile(USERNAME_PATTERN);
-        matcher = pattern.matcher(startlogin);
-        result= matcher.matches();
+
         pattern = Pattern.compile(PASSWORD_PATTERN);
         matcher = pattern.matcher(startpasswd);
-        result=result&&matcher.matches();
+        result=matcher.matches();
         result=result&&(startRoles.length>0);
         return result;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        User objj=(User) obj;
+        return this.getUsername().equals(objj.getUsername());
     }
 }

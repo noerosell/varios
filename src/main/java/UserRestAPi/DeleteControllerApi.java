@@ -1,5 +1,6 @@
 package UserRestAPi;
 
+import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsDeleteUser.UserWantsDeleteAUser;
 import useCases.UserWantsDeleteUser.UserWantsDeleteAUserRequest;
 import useCases.UserWantsDeleteUser.UserWantsDeleteAUserResponse;
@@ -15,26 +16,31 @@ import java.io.IOException;
 public class DeleteControllerApi extends ControllerApiBase {
 
     public void takeAction(HttpExchange httpExchange) throws Exception, IOException {
+        if (httpExchange.getRequestMethod().equals(HttpMethod.DELETE.name())) {
+            String[] path = httpExchange.getRequestURI().getPath().split("/");
+            String username = path[path.length - 1];
+            UserInMemoryRepository repository = new UserInMemoryRepository();
+            UserWantsDeleteAUserRequest requestUC = new UserWantsDeleteAUserRequest();
+            requestUC.username = username;
+            requestUC.authUser = this.requestingUser;
+            UserWantsDeleteAUser useCase = new UserWantsDeleteAUser(repository);
+            UserWantsDeleteAUserResponse responseUC = useCase.execute(requestUC);
 
-        String[] path = httpExchange.getRequestURI().getPath().split("/");
-        String username = path[path.length - 1];
-        UserInMemoryRepository repository = new UserInMemoryRepository();
-        UserWantsDeleteAUserRequest requestUC = new UserWantsDeleteAUserRequest();
-        requestUC.username = username;
-        requestUC.authUser = this.requestingUser;
-        UserWantsDeleteAUser useCase = new UserWantsDeleteAUser(repository);
-        UserWantsDeleteAUserResponse responseUC = useCase.execute(requestUC);
-
-        if (responseUC.roleAdminOk) {
-            if (responseUC.userDeleted) {
-                this.sendResponse(HttpStatus.NO_CONTENT_204, "");
+            if (responseUC.roleAdminOk) {
+                if (responseUC.userDeleted) {
+                    this.sendResponse(HttpStatus.NO_CONTENT_204, "");
+                } else {
+                    this.sendResponse(HttpStatus.NOT_FOUND_404, "");
+                }
             } else {
-                this.sendResponse(HttpStatus.NOT_FOUND_404, "");
+                String response = GSON.toJson("You don't have admin role");
+                this.sendResponse(HttpStatus.UNAUTHORIZED_401, response);
             }
-        } else {
-            String response = GSON.toJson("You don't have admin role");
-            this.sendResponse(HttpStatus.UNAUTHORIZED_401, response);
-        }
+        } else
 
+        {
+            String response = GSON.toJson("Incorrect Http Verb");
+            this.sendResponse(HttpStatus.BAD_REQUEST_400, response);
+        }
     }
 }

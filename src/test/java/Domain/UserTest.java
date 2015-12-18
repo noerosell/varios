@@ -20,7 +20,8 @@ public class UserTest {
     @Before
     public void setUp() throws Exception {
         Role[] rolesArray1={Role.ROLE_1};
-        user=new User("user1","Password1",rolesArray1);
+        UserIdentity userIdentity=new UserIdentity("user1");
+        user=new User(userIdentity,"Password1",rolesArray1);
     }
 
     @Test
@@ -59,7 +60,8 @@ public class UserTest {
     {
         thrown.expect(Exception.class);
          Role[] rolesArray1 = {Role.ROLE_1};
-         user = new User("user1", "new_password", rolesArray1);
+        UserIdentity userIdentity=new UserIdentity("user1");
+         user = new User(userIdentity, "new_password", rolesArray1);
 
     }
 

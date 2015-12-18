@@ -10,21 +10,25 @@ import java.util.ArrayList;
  * Created by noe.rosell on 14/12/15.
  */
 public class PermisionsInMemoryRepository implements PermisionsRepository {
-    private static ArrayList<Role> permisions=new ArrayList<Role>();
+    private static ArrayList<Role> permisions;
 
-    private static PermisionsInMemoryRepository instance=null;
+    private static PermisionsInMemoryRepository instance = null;
 
     public PermisionsInMemoryRepository() {
-        this.setUpPermissions();
-    };
+        if (permisions == null) {
+            permisions = new ArrayList<Role>();
+            this.setUpPermissions();
+        }
+    }
+
+    ;
 
 
     public boolean add(Role role) {
         return permisions.add(role);
     }
 
-    public Role get(int index)
-    {
+    public Role get(int index) {
         return permisions.get(index);
     }
 

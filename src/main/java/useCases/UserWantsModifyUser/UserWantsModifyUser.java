@@ -21,15 +21,15 @@ public class UserWantsModifyUser {
         User user=repository.getByLogin(request.authUser);
         UserWantsModifyUserResponse response=new UserWantsModifyUserResponse();
         response.roleAdminOk=false;
-        response.userCreated=false;
         if (user.hasRole(Role.ROLE_ADMIN)) {
-            response.userModified=false;
             response.roleAdminOk=true;
             if (repository.exists(request.user)==true) {
-                response.userCreated=true;
+                response.userModified=true;
+                response.userCreated=false;
             }
             else
             {
+                response.userCreated=false;
                 response.userModified=true;
             }
             repository.save(request.user);

@@ -1,16 +1,14 @@
 package UserRestAPi;
 
-import Domain.User;
+import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsViewAUser.UserWantsViewAUser;
 import useCases.UserWantsViewAUser.UserWantsViewAUserRequest;
 import useCases.UserWantsViewAUser.UserWantsViewAUserResponse;
 import Infrastructure.UserInMemoryRepository;
-import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import org.eclipse.jetty.http.HttpStatus;
-
 import java.io.IOException;
-import java.lang.reflect.Type;
+
 
 
 /**
@@ -18,24 +16,11 @@ import java.lang.reflect.Type;
  */
 public class GetControllerApi extends ControllerApiBase {
 
-    public class UserGsonSerializer implements JsonSerializer<User> {
-        public JsonElement serialize(User user, Type typeOfSrc, JsonSerializationContext context) {
-            int[] roles=user.getRoles().toArray();
-            String rolesString="";
-            for (int rol :roles
-                    ) {
-                rolesString=rolesString+Integer.toString(rol)+",";
-            }
-            rolesString=rolesString.substring(0,rolesString.length()-1);
-            String finalString="{\"username\":\""+user.getUsername()+"\",\"roles\":["+rolesString+"]}";
-        return new JsonPrimitive(finalString);
-        }
-    }
-
-
 
     public void takeAction(HttpExchange httpExchange) throws IOException,Exception {
-        if (httpExchange.getRequestMethod().equals("GET")) {
+
+        if (httpExchange.getRequestMethod().equals(HttpMethod.GET.name())) {
+
             String[] path = httpExchange.getRequestURI().getPath().split("/");
             String username = path[path.length - 1];
             UserInMemoryRepository repository = new UserInMemoryRepository();
@@ -45,11 +30,7 @@ public class GetControllerApi extends ControllerApiBase {
 
             if (responseUC.roleAdminOk && responseUC.user!=null)
             {
-                GsonBuilder gsonBuilder = new GsonBuilder();
-
-                gsonBuilder.registerTypeAdapter(User.class, new UserGsonSerializer());
-                Gson gson = gsonBuilder.create();
-                String response=gson.toJson(responseUC.user);
+                String response=GSON.toJson(responseUC.user);
                 this.sendResponse(HttpStatus.OK_200,response);
             }
             else if (!responseUC.roleAdminOk) {
