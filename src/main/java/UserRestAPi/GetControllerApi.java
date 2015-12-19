@@ -20,6 +20,7 @@ import java.io.IOException;
  */
 public class GetControllerApi extends ControllerApiBase {
 
+    private PresenterResponse jsonResponse=new PresenterResponse();
 
     public void takeAction(HttpExchange httpExchange) throws IOException,Exception {
 
@@ -32,14 +33,17 @@ public class GetControllerApi extends ControllerApiBase {
             UserWantsViewAUser useCase = new UserWantsViewAUser(repository);
             UserWantsViewAUserResponse responseUC = useCase.execute(requestUC);
 
-            PresenterResponse responseST=new getPresenterStrategy(responseUC.roleAdminOk,responseUC.user);
-            this.sendResponse(responseST.httpStatus,responseST.message);
+
+            getPresenterStrategy presenter=new getPresenterStrategy();
+            jsonResponse=presenter.run(responseUC.roleAdminOk,responseUC.user);
+            this.sendResponse(jsonResponse);
 
         }
         else
         {
-            String response = GSON.toJson("Incorrect Http Verb");
-            this.sendResponse(HttpStatus.BAD_REQUEST_400,response);
+            jsonResponse.httpStatus=HttpStatus.BAD_REQUEST_400;
+            jsonResponse.message="Incorrect Http Verb";
+            this.sendResponse(jsonResponse);
         }
 
     }

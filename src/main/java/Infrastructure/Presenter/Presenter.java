@@ -7,7 +7,7 @@ import org.eclipse.jetty.http.HttpStatus;
  * Created by noe.rosell on 18/12/15.
  */
 abstract class Presenter {
-    private HttpStatus httpStatus;
+    private int httpStatus;
     private String message;
     protected Gson GSON = new Gson();
 

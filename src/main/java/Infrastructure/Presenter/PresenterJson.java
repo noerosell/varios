@@ -5,7 +5,7 @@ package Infrastructure.Presenter;
  */
 public class PresenterJson extends Presenter {
     public void PresenterJson(PresenterStrategy strategy) {
-        strategy.run()
+        strategy.run();
 
     }
 }

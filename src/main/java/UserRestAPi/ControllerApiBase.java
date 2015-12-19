@@ -2,6 +2,7 @@ package UserRestAPi;
 
 import Domain.User;
 import Domain.authenticator.SimpleAuthenticator;
+import Infrastructure.Presenter.PresenterResponse;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsAuthenticate.UserWantsAuthenticate;
 import useCases.UserWantsAuthenticate.UserWantsAuthenticateRequest;
@@ -32,6 +33,8 @@ abstract public class ControllerApiBase implements HttpHandler {
 
     protected Gson GSON = new Gson();
 
+    private PresenterResponse jsonResponse=new PresenterResponse();
+
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
 
@@ -39,7 +42,8 @@ abstract public class ControllerApiBase implements HttpHandler {
         Headers requestHeaders = httpExchange.getRequestHeaders();
 
         if (!this.isCorrectContentNegotiation(requestHeaders)) {
-            this.sendResponse(HttpStatus.NOT_IMPLEMENTED_501, "Sorry, only json is accepted");
+            jsonResponse.httpStatus=HttpStatus.NOT_IMPLEMENTED_501;
+            jsonResponse.message="Sorry, only json is accepted";
         }
 
         String[] dataAuth = this.getAuthorizationData(requestHeaders);
@@ -59,8 +63,9 @@ abstract public class ControllerApiBase implements HttpHandler {
 
             UserWantsAuthenticateResponse responseUC = useCase.execute(requestUC, new SimpleAuthenticator());
             if (!responseUC.isAnAuthUser) {
-                String response = "Bad username or password";
-                httpExchange.sendResponseHeaders(HttpStatus.UNAUTHORIZED_401, response.length());
+                jsonResponse.httpStatus=HttpStatus.UNAUTHORIZED_401;
+                jsonResponse.message="Bad username or password";
+                this.sendResponse(jsonResponse);
             }
             requestingUser = dataAuth[0];
             this.takeAction(httpExchange);
@@ -107,11 +112,11 @@ abstract public class ControllerApiBase implements HttpHandler {
         return bodyRequest;
     }
 
-    protected void sendResponse(int httpStatusCode, String responseBody) throws IOException {
+    protected void sendResponse(PresenterResponse output) throws IOException {
         Headers responseHeaders = httpExchange.getResponseHeaders();
         responseHeaders.set("Content-Type", "application/json");
-        httpExchange.sendResponseHeaders(httpStatusCode, responseBody.getBytes().length);
-        httpExchange.getResponseBody().write(responseBody.getBytes());
+        httpExchange.sendResponseHeaders(output.httpStatus, output.message.getBytes().length);
+        httpExchange.getResponseBody().write(output.message.getBytes());
         httpExchange.close();
     }
 
@@ -123,7 +128,11 @@ abstract public class ControllerApiBase implements HttpHandler {
         } catch (JsonSyntaxException e) {
             inputUser = (User) null;
             String response = GSON.toJson("Invalid format or data received ");
-            this.sendResponse(HttpStatus.BAD_REQUEST_400, response);
+            PresenterResponse output=new PresenterResponse();
+            output.httpStatus=HttpStatus.BAD_REQUEST_400;
+            output.message="Invalid format or data received";
+            this.sendResponse(output);
+
         }
         return inputUser;
     }

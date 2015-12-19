@@ -1,10 +1,11 @@
 package useCases.UserWantsAuthenticate;
 
-import useCases.Response;
+
+import useCases.ResponseBase;
 
 /**
  * Created by noe.rosell on 13/12/15.
  */
-public class UserWantsAuthenticateResponse implements Response{
+public class UserWantsAuthenticateResponse implements ResponseBase {
     public boolean isAnAuthUser;
 }
