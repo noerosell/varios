@@ -1,6 +1,9 @@
 package UserRestAPi;
 
 import Domain.User;
+import Infrastructure.Presenter.PresenterResponse;
+import Infrastructure.Presenter.postPresenterStrategy;
+import Infrastructure.Presenter.putPresenterStrategy;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsModifyUser.UserWantsModifyUser;
 import useCases.UserWantsModifyUser.UserWantsModifyUserRequest;
@@ -16,8 +19,10 @@ import java.io.IOException;
  */
 public class PutControllerApi extends ControllerApiBase {
 
+    private PresenterResponse jsonResponse=new PresenterResponse();
+
     public void takeAction(HttpExchange httpExchange) throws Exception, IOException {
-        if (httpExchange.getRequestMethod().equals(HttpMethod.POST.name())) {
+        if (httpExchange.getRequestMethod().equals(HttpMethod.PUT.name())) {
             User inputUser;
             inputUser = this.getUserFromPayload(httpExchange);
 
@@ -27,19 +32,15 @@ public class PutControllerApi extends ControllerApiBase {
                     requestingUser);
             UserWantsModifyUser useCase = new UserWantsModifyUser(repository);
             UserWantsModifyUserResponse responseUC = useCase.execute(requestUC);
-            if (responseUC.roleAdminOk) {
-                if (responseUC.userModified) {
-                    this.sendResponse(HttpStatus.NO_CONTENT_204, "");
-                } else {
-                    this.sendResponse(HttpStatus.CREATED_201, "");
-                }
-            } else {
-                String response = GSON.toJson("You don't have admin role");
-                this.sendResponse(HttpStatus.UNAUTHORIZED_401, response);
-            }
+
+            putPresenterStrategy presenter=new putPresenterStrategy();
+            jsonResponse=presenter.run(responseUC.roleAdminOk,responseUC.userCreated);
+            this.sendResponse(jsonResponse);
+
         } else {
-            String response = GSON.toJson("Incorrect Http Verb");
-            this.sendResponse(HttpStatus.BAD_REQUEST_400, response);
+            jsonResponse.httpStatus=HttpStatus.BAD_REQUEST_400;
+            jsonResponse.message="Incorrect Http Verb";
+            this.sendResponse(jsonResponse);
         }
 
     }

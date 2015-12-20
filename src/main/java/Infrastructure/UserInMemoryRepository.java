@@ -45,7 +45,13 @@ public class UserInMemoryRepository implements UserRepository {
     }
 
     public void save(User user) {
-        rows.add(user);
+        if (rows.indexOf(user)==-1) {
+            rows.add(user);
+        }
+        else
+        {
+            rows.set(rows.indexOf(user),user);
+        }
     }
 
     public void delete(User user) {

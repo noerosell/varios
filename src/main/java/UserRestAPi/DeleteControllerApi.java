@@ -1,5 +1,8 @@
 package UserRestAPi;
 
+import Infrastructure.Presenter.PresenterResponse;
+import Infrastructure.Presenter.deletePresenterStrategy;
+import Infrastructure.Presenter.postPresenterStrategy;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsDeleteUser.UserWantsDeleteAUser;
 import useCases.UserWantsDeleteUser.UserWantsDeleteAUserRequest;
@@ -15,6 +18,8 @@ import java.io.IOException;
  */
 public class DeleteControllerApi extends ControllerApiBase {
 
+    private PresenterResponse jsonResponse=new PresenterResponse();
+
     public void takeAction(HttpExchange httpExchange) throws Exception, IOException {
         if (httpExchange.getRequestMethod().equals(HttpMethod.DELETE.name())) {
             String[] path = httpExchange.getRequestURI().getPath().split("/");
@@ -26,21 +31,15 @@ public class DeleteControllerApi extends ControllerApiBase {
             UserWantsDeleteAUser useCase = new UserWantsDeleteAUser(repository);
             UserWantsDeleteAUserResponse responseUC = useCase.execute(requestUC);
 
-            if (responseUC.roleAdminOk) {
-                if (responseUC.userDeleted) {
-                    this.sendResponse(HttpStatus.NO_CONTENT_204, "");
-                } else {
-                    this.sendResponse(HttpStatus.NOT_FOUND_404, "");
-                }
-            } else {
-                String response = GSON.toJson("You don't have admin role");
-                this.sendResponse(HttpStatus.UNAUTHORIZED_401, response);
-            }
+            deletePresenterStrategy presenter=new deletePresenterStrategy();
+            jsonResponse=presenter.run(responseUC.roleAdminOk,responseUC.userDeleted);
+            this.sendResponse(jsonResponse);
         } else
 
         {
-            String response = GSON.toJson("Incorrect Http Verb");
-            this.sendResponse(HttpStatus.BAD_REQUEST_400, response);
+            jsonResponse.httpStatus=HttpStatus.BAD_REQUEST_400;
+            jsonResponse.message="Incorrect Http Verb";
+            this.sendResponse(jsonResponse);
         }
     }
 }

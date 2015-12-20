@@ -1,6 +1,9 @@
 package UserRestAPi;
 
 import Domain.User;
+import Infrastructure.Presenter.PresenterResponse;
+import Infrastructure.Presenter.getPresenterStrategy;
+import Infrastructure.Presenter.postPresenterStrategy;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsCreateANewUser.UserWantsCreateANewUser;
 import useCases.UserWantsCreateANewUser.UserWantsCreateANewUserRequest;
@@ -21,7 +24,7 @@ import java.io.IOException;
  */
 public class PostControllerApi extends PutControllerApi {
 
-    //private static Gson GSON = new Gson();
+    private PresenterResponse jsonResponse=new PresenterResponse();
 
     public void takeAction(HttpExchange httpExchange) throws IOException, Exception {
         if (httpExchange.getRequestMethod().equals(HttpMethod.POST.name())) {
@@ -35,20 +38,14 @@ public class PostControllerApi extends PutControllerApi {
             UserWantsCreateANewUser useCase = new UserWantsCreateANewUser(repository);
             UserWantsCreateANewUserResponse responseUC = useCase.execute(requestUC);
 
-            if (responseUC.roleAdminOk) {
-                if (responseUC.userCreated) {
-                    this.sendResponse(HttpStatus.CREATED_201, "");
-                } else {
-                    String response = GSON.toJson("Allready exists.");
-                    this.sendResponse(HttpStatus.UNPROCESSABLE_ENTITY_422, response);
-                }
-            } else {
-                String response = GSON.toJson("You don't have admin role");
-                this.sendResponse(HttpStatus.UNAUTHORIZED_401, response);
-            }
+            postPresenterStrategy presenter=new postPresenterStrategy();
+            jsonResponse=presenter.run(responseUC.roleAdminOk,responseUC.userCreated);
+            this.sendResponse(jsonResponse);
+
         } else {
-            String response = GSON.toJson("Incorrect Http Verb");
-            this.sendResponse(HttpStatus.BAD_REQUEST_400, response);
+            jsonResponse.httpStatus=HttpStatus.BAD_REQUEST_400;
+            jsonResponse.message="Incorrect Http Verb";
+            this.sendResponse(jsonResponse);
         }
     }
 

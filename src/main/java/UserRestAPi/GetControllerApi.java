@@ -1,12 +1,17 @@
 package UserRestAPi;
 
+import Domain.User;
+import Infrastructure.Presenter.PresenterResponse;
+import com.google.gson.Gson;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsViewAUser.UserWantsViewAUser;
 import useCases.UserWantsViewAUser.UserWantsViewAUserRequest;
 import useCases.UserWantsViewAUser.UserWantsViewAUserResponse;
 import Infrastructure.UserInMemoryRepository;
+import Infrastructure.Presenter.getPresenterStrategy;
 import com.sun.net.httpserver.HttpExchange;
 import org.eclipse.jetty.http.HttpStatus;
+
 import java.io.IOException;
 
 
@@ -15,6 +20,8 @@ import java.io.IOException;
  * Created by noe on 15/12/2015.
  */
 public class GetControllerApi extends ControllerApiBase {
+
+    private PresenterResponse jsonResponse=new PresenterResponse();
 
 
     public void takeAction(HttpExchange httpExchange) throws IOException,Exception {
@@ -28,25 +35,17 @@ public class GetControllerApi extends ControllerApiBase {
             UserWantsViewAUser useCase = new UserWantsViewAUser(repository);
             UserWantsViewAUserResponse responseUC = useCase.execute(requestUC);
 
-            if (responseUC.roleAdminOk && responseUC.user!=null)
-            {
-                String response=GSON.toJson(responseUC.user);
-                this.sendResponse(HttpStatus.OK_200,response);
-            }
-            else if (!responseUC.roleAdminOk) {
 
-                String response = GSON.toJson("You don't have admin role");
-                this.sendResponse(HttpStatus.UNAUTHORIZED_401,response);
-            }
-            else
-            {
-                this.sendResponse(HttpStatus.NOT_FOUND_404, "");
-            }
+            getPresenterStrategy presenter=new getPresenterStrategy();
+            jsonResponse=presenter.run(responseUC.roleAdminOk,responseUC.user);
+            this.sendResponse(jsonResponse);
+
         }
         else
         {
-            String response = GSON.toJson("Incorrect Http Verb");
-            this.sendResponse(HttpStatus.BAD_REQUEST_400,response);
+            jsonResponse.httpStatus=HttpStatus.BAD_REQUEST_400;
+            jsonResponse.message="Incorrect Http Verb";
+            this.sendResponse(jsonResponse);
         }
 
     }
