@@ -15,7 +15,7 @@ $> curl -H "Content-Type: application/json" -X POST -d '{"username":{"useridenti
 ### To Modify a User (also creates a new one if not exist)
 
 ```sh
-$> curl -H "Content-Type: application/json" -X PUT -d '{"username":"user4","password":"Password4","roles":{roles:[ROLE_1,ROLE_2]}}' --user admin:Admin1 127.0.0.1:8000/api/user/modify -v
+$> curl -H "Content-Type: application/json" -X PUT -d '{"username":{"useridentity":"user4"},"password":"Password4","roles":{roles:[ROLE_1,ROLE_2]}}' --user admin:Admin1 127.0.0.1:8000/api/user/modify -v
 ```
 
 ### To Delete a user
