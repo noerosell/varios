@@ -2,6 +2,7 @@ package UserRestAPi;
 
 import Domain.User;
 import Infrastructure.Presenter.PresenterResponse;
+import com.google.gson.Gson;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsViewAUser.UserWantsViewAUser;
 import useCases.UserWantsViewAUser.UserWantsViewAUserRequest;
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class GetControllerApi extends ControllerApiBase {
 
     private PresenterResponse jsonResponse=new PresenterResponse();
+
 
     public void takeAction(HttpExchange httpExchange) throws IOException,Exception {
 

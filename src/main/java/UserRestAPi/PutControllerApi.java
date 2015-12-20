@@ -3,6 +3,7 @@ package UserRestAPi;
 import Domain.User;
 import Infrastructure.Presenter.PresenterResponse;
 import Infrastructure.Presenter.postPresenterStrategy;
+import Infrastructure.Presenter.putPresenterStrategy;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsModifyUser.UserWantsModifyUser;
 import useCases.UserWantsModifyUser.UserWantsModifyUserRequest;
@@ -21,7 +22,7 @@ public class PutControllerApi extends ControllerApiBase {
     private PresenterResponse jsonResponse=new PresenterResponse();
 
     public void takeAction(HttpExchange httpExchange) throws Exception, IOException {
-        if (httpExchange.getRequestMethod().equals(HttpMethod.POST.name())) {
+        if (httpExchange.getRequestMethod().equals(HttpMethod.PUT.name())) {
             User inputUser;
             inputUser = this.getUserFromPayload(httpExchange);
 
@@ -32,7 +33,7 @@ public class PutControllerApi extends ControllerApiBase {
             UserWantsModifyUser useCase = new UserWantsModifyUser(repository);
             UserWantsModifyUserResponse responseUC = useCase.execute(requestUC);
 
-            postPresenterStrategy presenter=new postPresenterStrategy();
+            putPresenterStrategy presenter=new putPresenterStrategy();
             jsonResponse=presenter.run(responseUC.roleAdminOk,responseUC.userCreated);
             this.sendResponse(jsonResponse);
 

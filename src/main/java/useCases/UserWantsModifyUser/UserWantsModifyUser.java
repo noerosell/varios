@@ -29,8 +29,8 @@ public class UserWantsModifyUser {
             }
             else
             {
-                response.userCreated=false;
-                response.userModified=true;
+                response.userCreated=true;
+                response.userModified=false;
             }
             repository.save(request.user);
         }

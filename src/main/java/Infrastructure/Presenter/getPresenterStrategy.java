@@ -1,10 +1,13 @@
 package Infrastructure.Presenter;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.http.HttpStatus;
 /**
  * Created by noe.rosell on 18/12/15.
  */
 public class getPresenterStrategy implements PresenterStrategy{
+
+    protected Gson GSON = new Gson();
 
     public void getPresenterStrategy() {
 
@@ -15,8 +18,8 @@ public class getPresenterStrategy implements PresenterStrategy{
         PresenterResponse response=new PresenterResponse();
         if (((boolean)params[0]) && params[1]!=null)
         {
+            response.message=GSON.toJson(params[1]);
             response.httpStatus = HttpStatus.OK_200;
-            response.message="";
         }
         else if (!(boolean)params[0]) {
            response.httpStatus=HttpStatus.UNAUTHORIZED_401;

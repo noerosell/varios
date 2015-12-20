@@ -10,7 +10,7 @@ public class putPresenterStrategy {
     {
         PresenterResponse response=new PresenterResponse();
         if ((boolean)params[0]) {
-            if ((boolean)params[1]) {
+            if (!(boolean)params[1]) {
                 response.httpStatus=HttpStatus.NO_CONTENT_204;
                 response.message="";
             } else {

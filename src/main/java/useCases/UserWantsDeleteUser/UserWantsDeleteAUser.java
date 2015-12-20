@@ -24,8 +24,10 @@ public class UserWantsDeleteAUser {
             response.userDeleted = false;
             response.roleAdminOk = true;
             if (toDeleteUser != null) {
-                repository.delete(toDeleteUser);
-                response.userDeleted = true;
+                if (repository.exists(toDeleteUser.getUsername())) {
+                    repository.delete(toDeleteUser);
+                    response.userDeleted = true;
+                }
             }
         }
         return response;

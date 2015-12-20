@@ -1,6 +1,7 @@
 package UserRestAPi;
 
 import Infrastructure.Presenter.PresenterResponse;
+import Infrastructure.Presenter.deletePresenterStrategy;
 import Infrastructure.Presenter.postPresenterStrategy;
 import org.eclipse.jetty.http.HttpMethod;
 import useCases.UserWantsDeleteUser.UserWantsDeleteAUser;
@@ -30,7 +31,7 @@ public class DeleteControllerApi extends ControllerApiBase {
             UserWantsDeleteAUser useCase = new UserWantsDeleteAUser(repository);
             UserWantsDeleteAUserResponse responseUC = useCase.execute(requestUC);
 
-            postPresenterStrategy presenter=new postPresenterStrategy();
+            deletePresenterStrategy presenter=new deletePresenterStrategy();
             jsonResponse=presenter.run(responseUC.roleAdminOk,responseUC.userDeleted);
             this.sendResponse(jsonResponse);
         } else
